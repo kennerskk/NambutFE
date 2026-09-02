@@ -214,22 +214,35 @@ export default function Editor() {
     });
   };
 
-  const handleAddElement = (type) => {
+  const handleAddElement = (type, payload) => {
     let content = 'New Element';
     let w = 200; let h = 50;
+    let baseStyle = { fontFamily: 'Inter', fontWeight: type === 'text' ? 'normal' : 'bold', color: type === 'button' ? '#fff' : '#0f172a' };
+    let actualType = type;
+
     if (type === 'text') { content = 'Text Block'; w = 200; h = 50; }
-    if (type === 'card') { content = 'Card'; w = 300; h = 200; }
     if (type === 'button') { content = 'Click Me'; w = 150; h = 50; }
-    if (type === 'image') { content = ''; w = 200; h = 200; }
+    if (type === 'image') { content = payload || ''; w = 200; h = 200; }
+    
+    if (type === 'shape' || type === 'card') {
+      actualType = 'card';
+      content = ''; w = 200; h = 200;
+      baseStyle.background = 'var(--surface)';
+      
+      if (payload === 'circle') baseStyle.borderRadius = '50%';
+      else if (payload === 'pill') baseStyle.borderRadius = '9999px';
+      else if (payload === 'triangle') baseStyle.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+      else baseStyle.borderRadius = '12px'; // square/card default
+    }
 
     const maxZ = deviceElements[previewMode].reduce((max, el) => Math.max(max, el.z || 1), 0);
     const newElement = {
       id: Math.random().toString(36).substr(2, 9),
-      type, content,
+      type: actualType, content,
       x: previewMode === 'mobile' ? 50 : 1050 / 2 - (w/2),
       y: previewMode === 'mobile' ? 50 : 600 / 2 - (h/2),
       w, h, z: maxZ + 1, locked: false,
-      style: { fontFamily: 'Inter', fontWeight: type === 'text' ? 'normal' : 'bold', color: type === 'button' ? '#fff' : '#0f172a' }
+      style: baseStyle
     };
     setDeviceElements(prev => ({ ...prev, [previewMode]: [...prev[previewMode], newElement] }));
     setSelectedIds([newElement.id]);

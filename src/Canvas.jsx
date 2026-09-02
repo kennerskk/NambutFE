@@ -129,7 +129,7 @@ const Canvas = ({ elements, settings, onUpdateElement, onDeleteElement, onLayerC
             }}
             onClick={(e) => handleElementClick(e, el.id)}
           >
-            <div className="canvas-element-inner">
+            <div className="canvas-element-inner" style={{ width: '100%', height: '100%' }}>
               <ElementRenderer 
                 element={el} 
                 isSelected={isSelected} 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Save, Sparkles, Type, Square, Image as ImageIcon, MousePointerClick, Magnet, Download, Upload, LogIn, LayoutTemplate } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Save, Sparkles, Type, MousePointerClick, Magnet, Download, Upload, LogIn, LayoutTemplate, Image as ImageIcon, Circle, Square, Triangle, RectangleHorizontal } from 'lucide-react';
 import { TEMPLATES } from '../../templates';
 
 export default function Header({ 
@@ -14,6 +14,44 @@ export default function Header({
   isSaving,
   onApplyTemplate
 }) {
+  const fileInputRef = useRef(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        // Compress image using canvas
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        } else if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to base64 JPEG
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        onAddElement('image', compressedBase64);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = null; // Reset input
+  };
   return (
     <header className="app-header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '250px' }}>
@@ -21,15 +59,31 @@ export default function Header({
         <h1 className="logo">Nambut</h1>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', background: 'var(--bg-main)', padding: '6px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+      <div style={{ display: 'flex', gap: '8px', background: 'var(--bg-main)', padding: '6px', borderRadius: '12px', border: '1px solid var(--surface-border)', alignItems: 'center' }}>
         <button className="btn btn-outline" style={{ padding: '0.5rem', borderRadius: '8px', border: 'none' }} onClick={() => onAddElement('text')} title="Add Text">
           <Type size={20} />
         </button>
-        <button className="btn btn-outline" style={{ padding: '0.5rem', borderRadius: '8px', border: 'none' }} onClick={() => onAddElement('card')} title="Add Shape/Card">
-          <Square size={20} />
-        </button>
-        <button className="btn btn-outline" style={{ padding: '0.5rem', borderRadius: '8px', border: 'none' }} onClick={() => onAddElement('image')} title="Add Image">
+        
+        {/* Shapes Dropdown */}
+        <select 
+          className="sidebar-input" 
+          style={{ width: '100px', padding: '0.4rem', fontSize: '0.85rem', cursor: 'pointer' }}
+          onChange={(e) => {
+            if (e.target.value) onAddElement('shape', e.target.value);
+            e.target.value = ''; // Reset
+          }}
+          title="Add Shape"
+        >
+          <option value="">Shapes...</option>
+          <option value="square">Square</option>
+          <option value="circle">Circle</option>
+          <option value="pill">Pill</option>
+          <option value="triangle">Triangle</option>
+        </select>
+
+        <button className="btn btn-outline" style={{ padding: '0.5rem', borderRadius: '8px', border: 'none' }} onClick={() => fileInputRef.current?.click()} title="Upload Image">
           <ImageIcon size={20} />
+          <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
         </button>
         <button className="btn btn-outline" style={{ padding: '0.5rem', borderRadius: '8px', border: 'none' }} onClick={() => onAddElement('button')} title="Add Button">
           <MousePointerClick size={20} />
