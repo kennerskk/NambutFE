@@ -56,6 +56,23 @@ export default function Viewer() {
     fetchCard();
   }, [id]);
 
+  // Calculate layout sizes based on screen width
+  const isMobile = window.innerWidth <= 768;
+  const targetWidth = isMobile ? 375 : 1050;
+  const targetHeight = isMobile ? 812 : 600;
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Calculate scale to fit the window with a 5% padding
+      const scaleX = window.innerWidth / targetWidth;
+      const scaleY = window.innerHeight / targetHeight;
+      setScale(Math.min(scaleX, scaleY) * 0.95); 
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [targetWidth, targetHeight]);
+
   if (isLoading) {
     return (
       <div className="loading-screen">
@@ -69,24 +86,7 @@ export default function Viewer() {
     return <div className="loading-screen"><h2 style={{ color: 'var(--danger)' }}>{error || 'Card not found'}</h2></div>;
   }
 
-  // Choose layout based on screen width (simple responsive viewer)
-  const isMobile = window.innerWidth <= 768;
-  const targetWidth = isMobile ? 375 : 1050;
-  const targetHeight = isMobile ? 812 : 600;
   const elements = (isMobile && card.mobileElements?.length > 0 ? card.mobileElements : card.desktopElements) || [];
-
-  useEffect(() => {
-    if (!card) return;
-    const handleResize = () => {
-      // Calculate scale to fit the window with a 5% padding
-      const scaleX = window.innerWidth / targetWidth;
-      const scaleY = window.innerHeight / targetHeight;
-      setScale(Math.min(scaleX, scaleY) * 0.95); 
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [targetWidth, targetHeight, card]);
 
   const canvasStyle = {
     backgroundColor: card.settings?.backgroundColor || '#f8fafc',
