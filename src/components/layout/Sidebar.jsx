@@ -1,6 +1,7 @@
 import React from 'react';
 import { LayoutPanelLeft, X, Monitor, Tablet, Smartphone, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, ArrowUpToLine, Minus, ArrowDownToLine } from 'lucide-react';
 import GradientPicker from './GradientPicker';
+import ColorInput from './ColorInput';
 
 const FONTS = [
   'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 
@@ -104,11 +105,11 @@ export default function Sidebar({
           </div>
 
           <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>
-            <label className="sidebar-label">Text Color</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input type="color" className="sidebar-input" style={{ flex: '0 0 50px', padding: '0', height: '36px' }} value={primarySelectedElement.style?.color || '#000000'} onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, color: e.target.value }})} />
-              <input type="text" className="sidebar-input" style={{ flex: 1 }} value={primarySelectedElement.style?.color || ''} onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, color: e.target.value }})} />
-            </div>
+            <ColorInput 
+              label="Text Color"
+              value={primarySelectedElement.style?.color || '#000000'}
+              onChange={(newColor) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, color: newColor }})}
+            />
           </div>
 
           <div className="sidebar-section" style={{ marginBottom: '1.5rem', background: 'var(--bg-main)', padding: '12px', borderRadius: '8px' }}>

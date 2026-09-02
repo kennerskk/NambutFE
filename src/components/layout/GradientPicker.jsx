@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ColorInput from './ColorInput';
 
 export default function GradientPicker({ value, onChange }) {
   const [type, setType] = useState('solid'); // 'solid' | 'linear'
@@ -55,32 +56,40 @@ export default function GradientPicker({ value, onChange }) {
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-        <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Color 1</label>
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <input type="color" className="sidebar-input" style={{ padding: 0, height: '30px', flex: 1 }} value={color1} onChange={(e) => { setColor1(e.target.value); handleUpdate(type, e.target.value, stop1, color2, stop2, angle); }} />
-          </div>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: '120px' }}>
+          <ColorInput 
+            label="Color 1" 
+            value={color1} 
+            onChange={(c) => { setColor1(c); handleUpdate(type, c, stop1, color2, stop2, angle); }} 
+          />
           {type === 'linear' && (
-            <input type="range" min="0" max="100" style={{ width: '100%', marginTop: '4px' }} value={stop1} onChange={(e) => { setStop1(e.target.value); handleUpdate(type, color1, e.target.value, color2, stop2, angle); }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Stop</span>
+              <input type="range" min="0" max="100" style={{ flex: 1 }} className="sidebar-input" value={stop1} onChange={(e) => { setStop1(e.target.value); handleUpdate(type, color1, e.target.value, color2, stop2, angle); }} />
+            </div>
           )}
         </div>
 
         {type === 'linear' && (
-          <div style={{ flex: 1 }}>
-            <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Color 2</label>
-            <div style={{ display: 'flex', gap: '4px' }}>
-              <input type="color" className="sidebar-input" style={{ padding: 0, height: '30px', flex: 1 }} value={color2} onChange={(e) => { setColor2(e.target.value); handleUpdate(type, color1, stop1, e.target.value, stop2, angle); }} />
+          <div style={{ flex: 1, minWidth: '120px' }}>
+            <ColorInput 
+              label="Color 2" 
+              value={color2} 
+              onChange={(c) => { setColor2(c); handleUpdate(type, color1, stop1, c, stop2, angle); }} 
+            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Stop</span>
+              <input type="range" min="0" max="100" style={{ flex: 1 }} className="sidebar-input" value={stop2} onChange={(e) => { setStop2(e.target.value); handleUpdate(type, color1, stop1, color2, e.target.value, angle); }} />
             </div>
-            <input type="range" min="0" max="100" style={{ width: '100%', marginTop: '4px' }} value={stop2} onChange={(e) => { setStop2(e.target.value); handleUpdate(type, color1, stop1, color2, e.target.value, angle); }} />
           </div>
         )}
       </div>
 
       {type === 'linear' && (
-        <div>
-          <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Angle ({angle}°)</label>
-          <input type="range" min="0" max="360" style={{ width: '100%' }} value={angle} onChange={(e) => { setAngle(e.target.value); handleUpdate(type, color1, stop1, color2, stop2, e.target.value); }} />
+        <div style={{ marginTop: '8px' }}>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>Angle ({angle}°)</label>
+          <input type="range" min="0" max="360" className="sidebar-input" style={{ width: '100%' }} value={angle} onChange={(e) => { setAngle(e.target.value); handleUpdate(type, color1, stop1, color2, stop2, e.target.value); }} />
         </div>
       )}
     </div>
