@@ -84,9 +84,10 @@ const ElementRenderer = ({ element, onUpdate, isSelected }) => {
     return <img src={content || 'https://via.placeholder.com/300'} alt="Element" style={{ ...combinedStyle, pointerEvents: 'none' }} />;
   }
 
-  // Detect social icon based on raw text (strip html tags if any)
+  // Detect social icon based on link or raw text
   const plainText = typeof localContent === 'string' ? localContent.replace(/<[^>]+>/g, '') : '';
-  const SocialIcon = type === 'button' ? getSocialIcon(plainText) : null;
+  const urlForIcon = element.link || plainText;
+  const SocialIcon = type === 'button' ? getSocialIcon(urlForIcon) : null;
 
   return (
     <div

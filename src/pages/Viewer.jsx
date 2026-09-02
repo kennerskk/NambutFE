@@ -85,7 +85,11 @@ export default function Viewer() {
   };
 
   const handleElementClick = (element) => {
-    // If it's a button and has a valid URL, open it
+    if (element.link) {
+      window.open(element.link, '_blank');
+      return;
+    }
+    // Fallback for older buttons where content is the url
     if (element.type === 'button') {
       const plainText = typeof element.content === 'string' ? element.content.replace(/<[^>]+>/g, '') : '';
       if (plainText.startsWith('http')) {
@@ -128,7 +132,8 @@ export default function Viewer() {
         };
 
         const plainText = typeof el.content === 'string' ? el.content.replace(/<[^>]+>/g, '') : '';
-        const SocialIcon = el.type === 'button' ? getSocialIcon(plainText) : null;
+        const urlForIcon = el.link || plainText;
+        const SocialIcon = el.type === 'button' ? getSocialIcon(urlForIcon) : null;
 
         if (el.type === 'image') {
           return <img key={el.id} src={el.content} alt="" style={{...style, pointerEvents: 'none'}} />;
@@ -142,7 +147,7 @@ export default function Viewer() {
             onClick={() => handleElementClick(el)}
           >
             {SocialIcon && <div>{SocialIcon}</div>}
-            {(!SocialIcon || plainText !== el.content) && (
+            {(!SocialIcon || (el.link ? plainText !== el.link : plainText !== el.content)) && (
               <span dangerouslySetInnerHTML={{ __html: el.content }} />
             )}
           </div>

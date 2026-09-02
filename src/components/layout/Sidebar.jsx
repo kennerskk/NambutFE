@@ -113,6 +113,17 @@ export default function Sidebar({
           </div>
 
           <div className="sidebar-section" style={{ marginBottom: '1.5rem', background: 'var(--bg-main)', padding: '12px', borderRadius: '8px' }}>
+            <label className="sidebar-label" style={{ marginBottom: '8px', borderBottom: '1px solid var(--surface-border)', paddingBottom: '4px' }}>Action / Link</label>
+            <input 
+              type="text" 
+              className="sidebar-input" 
+              placeholder="https://..." 
+              value={primarySelectedElement.link || ''} 
+              onChange={(e) => onUpdateElement({...primarySelectedElement, link: e.target.value})} 
+            />
+          </div>
+
+          <div className="sidebar-section" style={{ marginBottom: '1.5rem', background: 'var(--bg-main)', padding: '12px', borderRadius: '8px' }}>
             <label className="sidebar-label" style={{ marginBottom: '8px', borderBottom: '1px solid var(--surface-border)', paddingBottom: '4px' }}>Effects & Styling</label>
 
             <div style={{ marginBottom: '12px' }}>
