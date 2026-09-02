@@ -1,0 +1,308 @@
+:root {
+  /* Minimal Clean Theme for Business Cards */
+  --bg-main: #f8fafc;
+  --surface: #ffffff;
+  --surface-border: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --danger: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  height: 60px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--primary);
+}
+
+.app-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.canvas-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: auto;
+  padding: 2rem;
+  background-image: 
+    linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+    linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Horizontal Business Card dimensions (Desktop) */
+.preview-container {
+  background: var(--surface);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid var(--surface-border);
+}
+
+.preview-desktop {
+  width: 1050px;
+  height: 600px;
+}
+
+.preview-tablet {
+  width: 768px;
+  height: 1024px;
+}
+
+.preview-mobile {
+  width: 375px;
+  height: 812px;
+}
+
+.canvas-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.canvas-element {
+  position: absolute;
+  cursor: grab;
+}
+
+.canvas-element:active {
+  cursor: grabbing;
+}
+
+.canvas-element.element-selected {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.element-floating-toolbar {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+  z-index: 9999;
+  border: 1px solid #334155;
+}
+
+.element-floating-toolbar button {
+  color: white;
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.element-floating-toolbar button:hover {
+  background: #334155;
+}
+
+.properties-sidebar {
+  width: 320px;
+  background: var(--surface);
+  border-left: 1px solid var(--surface-border);
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+  box-shadow: -4px 0 15px rgba(0,0,0,0.02);
+}
+
+.properties-sidebar.closed {
+  transform: translateX(100%);
+  position: absolute;
+  right: 0;
+  height: calc(100vh - 60px);
+}
+
+.sidebar-section {
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.sidebar-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.sidebar-input {
+  width: 100%;
+  background: var(--bg-main);
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.sidebar-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--surface-border);
+}
+
+.btn-outline:hover {
+  background: var(--bg-main);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #10b981;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 10000;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--surface-border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.modal-content {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+}
