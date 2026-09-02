@@ -99,6 +99,7 @@ export default function Viewer() {
     backgroundPosition: card.settings?.backgroundPosition || 'center',
     width: `${targetWidth}px`,
     height: `${targetHeight}px`,
+    flexShrink: 0,
     position: 'relative',
     overflow: 'hidden',
     transform: `scale(${scale})`,
