@@ -73,7 +73,7 @@ export default function Viewer() {
   const isMobile = window.innerWidth <= 768;
   const targetWidth = isMobile ? 375 : 1050;
   const targetHeight = isMobile ? 812 : 600;
-  const elements = isMobile && card.mobileElements?.length > 0 ? card.mobileElements : card.desktopElements;
+  const elements = (isMobile && card.mobileElements?.length > 0 ? card.mobileElements : card.desktopElements) || [];
 
   useEffect(() => {
     if (!card) return;
