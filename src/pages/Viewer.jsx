@@ -56,31 +56,15 @@ export default function Viewer() {
     fetchCard();
   }, [id]);
 
-  // Always use desktop layout (landscape) for Viewer, as requested by user
   const targetWidth = 1050;
   const targetHeight = 600;
-  const [rotate, setRotate] = useState(false);
+  const [scale, setScale] = useState(1);
   
   useEffect(() => {
     const handleResize = () => {
-      const isMobile = window.innerWidth <= 768;
-      const isPortrait = window.innerHeight > window.innerWidth;
-      
-      let containerW = window.innerWidth;
-      let containerH = window.innerHeight;
-      
-      if (isMobile && isPortrait) {
-        setRotate(true);
-        // Swap dimensions for scaling calculation since it will be rotated 90deg
-        const scaleX = containerH / targetWidth;
-        const scaleY = containerW / targetHeight;
-        setScale(Math.min(scaleX, scaleY) * 0.95);
-      } else {
-        setRotate(false);
-        const scaleX = containerW / targetWidth;
-        const scaleY = containerH / targetHeight;
-        setScale(Math.min(scaleX, scaleY) * 0.95); 
-      }
+      const scaleX = window.innerWidth / targetWidth;
+      const scaleY = window.innerHeight / targetHeight;
+      setScale(Math.min(scaleX, scaleY) * 0.95); 
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -118,7 +102,7 @@ export default function Viewer() {
     height: `${targetHeight}px`,
     position: 'relative',
     overflow: 'hidden',
-    transform: `scale(${scale}) ${rotate ? 'rotate(90deg)' : ''}`,
+    transform: `scale(${scale})`,
     transformOrigin: 'center center',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     borderRadius: '12px'
@@ -147,7 +131,9 @@ export default function Viewer() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#111827', // Dark background for the viewer area outside the card
+      backgroundColor: '#f8fafc',
+      backgroundImage: 'linear-gradient(to right, #f1f5f9 1px, transparent 1px), linear-gradient(to bottom, #f1f5f9 1px, transparent 1px)',
+      backgroundSize: '20px 20px',
       overflow: 'hidden'
     }}>
       <div style={canvasStyle}>
