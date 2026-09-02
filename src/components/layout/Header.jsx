@@ -15,14 +15,29 @@ export default function Header({
   onApplyTemplate,
   onShare,
   onPreview,
-  onAvatarClick
+  onAvatarClick,
+  cardTitle,
+  setCardTitle
 }) {
 
   return (
     <header className="app-header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '250px' }}>
         <Sparkles className="logo-icon" color="#3b82f6" />
-        <h1 className="logo">Nambut</h1>
+        <h1 className="logo" style={{ marginRight: '16px' }}>Nambut</h1>
+        
+        {/* Card Title Input */}
+        <input 
+          type="text" 
+          value={cardTitle || ''} 
+          onChange={(e) => setCardTitle(e.target.value)}
+          placeholder="Card Title"
+          className="sidebar-input"
+          style={{ width: '150px', padding: '0.4rem', fontSize: '0.9rem', border: '1px solid transparent', background: 'transparent', transition: 'all 0.2s', fontWeight: '500' }}
+          onFocus={(e) => { e.target.style.border = '1px solid var(--surface-border)'; e.target.style.background = 'var(--surface)'; }}
+          onBlur={(e) => { e.target.style.border = '1px solid transparent'; e.target.style.background = 'transparent'; }}
+          title="Rename Card"
+        />
       </div>
 
       <div style={{ display: 'flex', gap: '8px', background: 'var(--bg-main)', padding: '6px', borderRadius: '12px', border: '1px solid var(--surface-border)', alignItems: 'center' }}>

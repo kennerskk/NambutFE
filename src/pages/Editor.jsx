@@ -13,6 +13,7 @@ export default function Editor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const cardId = id || 'default-card';
+  const isNewCard = !id; // true if we are at '/'
   
   const [deviceElements, setDeviceElements] = useState({ desktop: [], tablet: [], mobile: [] });
   const [settings, setSettings] = useState({
@@ -36,6 +37,7 @@ export default function Editor() {
   const [cardToDelete, setCardToDelete] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
+  const [cardTitle, setCardTitle] = useState('My Business Card');
   const [previewMode, setPreviewMode] = useState('desktop');
   const [isSnapEnabled, setIsSnapEnabled] = useState(true);
   
@@ -67,6 +69,7 @@ export default function Editor() {
         }
 
         const card = await api.getCard(cardId);
+        if (card.title) setCardTitle(card.title);
         if (card.desktopElements) {
           setDeviceElements({
             desktop: card.desktopElements || [],
@@ -123,8 +126,10 @@ export default function Editor() {
     
     setIsSaving(true);
     try {
-      await api.saveCard(cardId, {
-        title: 'My Business Card',
+      const targetCardId = isNewCard ? Math.random().toString(36).substr(2, 9) : cardId;
+      
+      await api.saveCard(targetCardId, {
+        title: cardTitle || 'My Business Card',
         settings,
         desktopElements: deviceElements.desktop,
         tabletElements: deviceElements.tablet,
@@ -133,8 +138,11 @@ export default function Editor() {
       setShowToast('✅ Saved Successfully!');
       setTimeout(() => setShowToast(''), 3000);
       
-      // If we just saved successfully, we might want to refresh the cards list if it was open
       if (showMyCardsModal) fetchMyCards();
+      
+      if (isNewCard) {
+        navigate(`/card/${targetCardId}`);
+      }
     } catch (err) {
       if (err.error === 'LIMIT_REACHED') {
         setShowLimitModal(true);
@@ -386,6 +394,8 @@ export default function Editor() {
           onShare={handleShare}
           onPreview={() => setIsPreviewMode(true)}
           onAvatarClick={handleAvatarClick}
+          cardTitle={cardTitle}
+          setCardTitle={setCardTitle}
         />
       )}
       
