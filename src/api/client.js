@@ -25,7 +25,16 @@ export const api = {
     body: JSON.stringify({ username, password })
   }).then(res => res.json().then(data => res.ok ? data : Promise.reject(data))),
   
+  getMyCards: () => fetch(`${API_BASE}/cards`, { 
+    headers: getAuthHeaders() 
+  }).then(res => res.ok ? res.json() : Promise.reject(res)),
+
   getCard: (id) => fetch(`${API_BASE}/card/${id}`).then(res => res.ok ? res.json() : Promise.reject(res)),
+  
+  deleteCard: (id) => fetch(`${API_BASE}/card/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  }).then(res => res.json().then(data => res.ok ? data : Promise.reject(data))),
   
   saveCard: (id, cardData) => fetch(`${API_BASE}/card/${id}`, {
     method: 'POST',

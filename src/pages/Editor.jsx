@@ -6,6 +6,7 @@ import { api } from '../api/client';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import AuthModal from '../components/modals/AuthModal';
+import Modal from '../components/ui/Modal';
 import { TEMPLATES } from '../templates';
 
 export default function Editor() {
@@ -27,6 +28,20 @@ export default function Editor() {
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  
+  // Card Management States
+  const [myCards, setMyCards] = useState([]);
+  const [showMyCardsModal, setShowMyCardsModal] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  
+  // Card Management States
+  const [myCards, setMyCards] = useState([]);
+  const [showMyCardsModal, setShowMyCardsModal] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const [previewMode, setPreviewMode] = useState('desktop');
   const [isSnapEnabled, setIsSnapEnabled] = useState(true);
   
@@ -123,11 +138,53 @@ export default function Editor() {
       });
       setShowToast('✅ Saved Successfully!');
       setTimeout(() => setShowToast(''), 3000);
+      
+      // If we just saved successfully, we might want to refresh the cards list if it was open
+      if (showMyCardsModal) fetchMyCards();
     } catch (err) {
-      alert(err.error || 'Failed to save');
+      if (err.error === 'LIMIT_REACHED') {
+        setShowLimitModal(true);
+      } else {
+        alert(err.error || 'Failed to save');
+      }
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const fetchMyCards = async () => {
+    try {
+      const cards = await api.getMyCards();
+      setMyCards(cards);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAvatarClick = () => {
+    fetchMyCards();
+    setShowMyCardsModal(true);
+  };
+
+  const confirmDeleteCard = async () => {
+    if (!cardToDelete) return;
+    try {
+      await api.deleteCard(cardToDelete.id);
+      setMyCards(prev => prev.filter(c => c.id !== cardToDelete.id));
+      if (cardId === cardToDelete.id) {
+        navigate('/'); // Redirect to new card if deleted the current one
+      }
+      setCardToDelete(null);
+    } catch (err) {
+      alert(err.error || 'Failed to delete');
+    }
+  };
+
+  const handleShare = () => {
+    const url = `${window.location.origin}/view/${cardId}`;
+    navigator.clipboard.writeText(url);
+    setShowToast('🔗 Link copied to clipboard!');
+    setTimeout(() => setShowToast(''), 3000);
   };
 
   const handleAuthSuccess = (userData) => {
@@ -320,18 +377,23 @@ export default function Editor() {
         />
       )}
 
-      <Header 
-        user={user}
-        onLoginClick={() => setShowAuthModal(true)}
-        isSnapEnabled={isSnapEnabled}
-        onToggleSnap={() => setIsSnapEnabled(!isSnapEnabled)}
-        onAddElement={handleAddElement}
-        onExport={handleExportScript}
-        onImport={handleImportScript}
-        onSave={handleSaveDesign}
-        isSaving={isSaving}
-        onApplyTemplate={handleApplyTemplate}
-      />
+      {!isPreviewMode && (
+        <Header 
+          user={user}
+          onLoginClick={() => setShowAuthModal(true)}
+          isSnapEnabled={isSnapEnabled}
+          onToggleSnap={() => setIsSnapEnabled(!isSnapEnabled)}
+          onAddElement={handleAddElement}
+          onExport={handleExportScript}
+          onImport={handleImportScript}
+          onSave={handleSaveDesign}
+          isSaving={isSaving}
+          onApplyTemplate={handleApplyTemplate}
+          onShare={handleShare}
+          onPreview={() => setIsPreviewMode(true)}
+          onAvatarClick={handleAvatarClick}
+        />
+      )}
       
       <main className="app-main">
         <div className="canvas-wrapper">
@@ -354,20 +416,72 @@ export default function Editor() {
           )}
         </div>
         
-        <Sidebar 
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          selectedIds={selectedIds}
-          primarySelectedElement={primarySelectedElement}
-          previewMode={previewMode}
-          setPreviewMode={setPreviewMode}
-          settings={settings}
-          setSettings={setSettings}
-          onUpdateElement={handleUpdateElement}
-          onDeleteSelected={(id) => { handleDeleteElement(id); setSelectedIds([]); }}
-          onDeleteAllSelected={() => { selectedIds.forEach(id => handleDeleteElement(id)); setSelectedIds([]); }}
-        />
+        {!isPreviewMode && (
+          <Sidebar 
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            selectedIds={selectedIds}
+            primarySelectedElement={primarySelectedElement}
+            previewMode={previewMode}
+            setPreviewMode={setPreviewMode}
+            settings={settings}
+            setSettings={setSettings}
+            onUpdateElement={handleUpdateElement}
+            onDeleteSelected={(id) => { handleDeleteElement(id); setSelectedIds([]); }}
+            onDeleteAllSelected={() => { selectedIds.forEach(id => handleDeleteElement(id)); setSelectedIds([]); }}
+          />
+        )}
       </main>
+
+      {isPreviewMode && (
+        <button 
+          className="btn btn-primary"
+          style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999, padding: '12px 24px', borderRadius: '30px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+          onClick={() => setIsPreviewMode(false)}
+        >
+          Exit Preview
+        </button>
+      )}
+
+      {/* Modals */}
+      <Modal isOpen={showMyCardsModal} onClose={() => setShowMyCardsModal(false)} title="My Cards">
+        {myCards.length === 0 ? (
+          <p style={{ color: 'var(--text-muted)' }}>You don't have any saved cards yet.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {myCards.map(card => (
+              <div key={card.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid var(--surface-border)', borderRadius: '8px', background: 'var(--bg-main)' }}>
+                <div 
+                  style={{ flex: 1, cursor: 'pointer', fontWeight: '500', color: 'var(--text-main)' }} 
+                  onClick={() => { setShowMyCardsModal(false); navigate(`/card/${card.id}`); }}
+                >
+                  {card.title} <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginLeft: '8px' }}>({new Date(card.updated_at).toLocaleDateString()})</span>
+                </div>
+                <button className="btn btn-outline" style={{ border: 'none', color: 'var(--danger)', padding: '4px 8px' }} onClick={() => setCardToDelete(card)}>Delete</button>
+              </div>
+            ))}
+            {myCards.length < 3 && (
+              <button className="btn btn-primary" style={{ marginTop: '8px', width: '100%' }} onClick={() => { setShowMyCardsModal(false); navigate('/'); }}>+ Create New Card</button>
+            )}
+          </div>
+        )}
+      </Modal>
+
+      <Modal isOpen={!!cardToDelete} onClose={() => setCardToDelete(null)} title="Confirm Delete">
+        <p style={{ color: 'var(--text-main)', marginBottom: '20px' }}>Are you sure you want to delete this card? This action cannot be undone.</p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+          <button className="btn btn-outline" onClick={() => setCardToDelete(null)}>Cancel</button>
+          <button className="btn btn-primary" style={{ background: 'var(--danger)' }} onClick={confirmDeleteCard}>Delete</button>
+        </div>
+      </Modal>
+
+      <Modal isOpen={showLimitModal} onClose={() => setShowLimitModal(false)} title="Limit Reached">
+        <p style={{ color: 'var(--text-main)', marginBottom: '20px' }}>You can only create a maximum of 3 cards. Please delete an existing card before creating a new one.</p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button className="btn btn-primary" onClick={() => setShowLimitModal(false)}>Understood</button>
+        </div>
+      </Modal>
+
     </div>
   );
 }

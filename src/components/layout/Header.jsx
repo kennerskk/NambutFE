@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Save, Sparkles, Type, MousePointerClick, Magnet, Download, Upload, LogIn, LayoutTemplate, Image as ImageIcon, Circle, Square, Triangle, RectangleHorizontal } from 'lucide-react';
+import { Save, Sparkles, Type, MousePointerClick, Magnet, Download, Upload, LogIn, LayoutTemplate, Image as ImageIcon, Circle, Square, Triangle, RectangleHorizontal, Eye, Link as LinkIcon } from 'lucide-react';
 import { TEMPLATES } from '../../templates';
 
 export default function Header({ 
@@ -12,7 +12,10 @@ export default function Header({
   onImport, 
   onSave, 
   isSaving,
-  onApplyTemplate
+  onApplyTemplate,
+  onShare,
+  onPreview,
+  onAvatarClick
 }) {
 
   return (
@@ -56,7 +59,7 @@ export default function Header({
         </button>
       </div>
       
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', width: '250px', justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', width: '300px', justifyContent: 'flex-end' }}>
         
         <select 
           className="sidebar-input" 
@@ -81,12 +84,27 @@ export default function Header({
           <Upload size={18} />
         </button>
 
+        <button className="btn btn-outline" style={{ padding: '0.4rem' }} onClick={onPreview} title="Preview Mode">
+          <Eye size={18} />
+        </button>
+        <button className="btn btn-outline" style={{ padding: '0.4rem' }} onClick={onShare} title="Share Link">
+          <LinkIcon size={18} />
+        </button>
         <button className="btn btn-primary" style={{ padding: '0.4rem' }} onClick={onSave} disabled={isSaving} title="Save Design">
           <Save size={18} />
         </button>
         
         {user ? (
-          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginLeft: '4px' }} title={user.username}>
+          <div 
+            style={{ 
+              width: '32px', height: '32px', minWidth: '32px', borderRadius: '50%', 
+              background: 'var(--primary)', color: 'white', display: 'flex', 
+              alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', 
+              marginLeft: '4px', cursor: 'pointer', flexShrink: 0
+            }} 
+            title="My Cards"
+            onClick={onAvatarClick}
+          >
             {user.username.charAt(0).toUpperCase()}
           </div>
         ) : (

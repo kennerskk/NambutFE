@@ -153,6 +153,34 @@ export default function Viewer() {
           </div>
         );
       })}
+      
+      {/* Advertisement Banner */}
+      <a 
+        href="https://nambut-fe.vercel.app/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        style={{
+          position: 'fixed',
+          bottom: '16px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(8px)',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          fontSize: '12px',
+          color: '#333',
+          textDecoration: 'none',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          zIndex: 1000,
+          fontWeight: '500'
+        }}
+      >
+        ✨ Create your own card at <span style={{ color: '#3b82f6' }}>nambut-fe.vercel.app</span>
+      </a>
     </div>
   );
 }
