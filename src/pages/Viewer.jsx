@@ -56,11 +56,10 @@ export default function Viewer() {
     fetchCard();
   }, [id]);
 
-  // Calculate layout sizes based on screen width
-  const isMobile = window.innerWidth <= 768;
-  const targetWidth = isMobile ? 375 : 1050;
-  const targetHeight = isMobile ? 812 : 600;
-
+  // Always use desktop layout (landscape) for Viewer, as requested by user
+  const targetWidth = 1050;
+  const targetHeight = 600;
+  
   useEffect(() => {
     const handleResize = () => {
       // Calculate scale to fit the window with a 5% padding
@@ -86,7 +85,7 @@ export default function Viewer() {
     return <div className="loading-screen"><h2 style={{ color: 'var(--danger)' }}>{error || 'Card not found'}</h2></div>;
   }
 
-  const elements = (isMobile && card.mobileElements?.length > 0 ? card.mobileElements : card.desktopElements) || [];
+  const elements = card.desktopElements || [];
 
   const canvasStyle = {
     backgroundColor: card.settings?.backgroundColor || '#f8fafc',
@@ -137,7 +136,7 @@ export default function Viewer() {
           text: { fontSize: '24px', fontWeight: 'bold', color: 'var(--text-main)', textAlign: 'center' },
           button: { background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', padding: '10px' },
           card: { background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--surface-border)', padding: '16px' },
-          image: { objectFit: 'cover', width: '100%', height: '100%', borderRadius: '8px' }
+          image: { objectFit: 'cover', borderRadius: '8px' }
         };
 
         const style = {
