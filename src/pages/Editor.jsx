@@ -222,7 +222,7 @@ export default function Editor() {
 
     if (type === 'text') { content = 'Text Block'; w = 200; h = 50; }
     if (type === 'button') { content = 'Click Me'; w = 150; h = 50; }
-    if (type === 'image') { content = payload || ''; w = 200; h = 200; }
+    if (type === 'image') { content = payload || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80'; w = 200; h = 200; }
     
     if (type === 'shape' || type === 'card') {
       actualType = 'card';

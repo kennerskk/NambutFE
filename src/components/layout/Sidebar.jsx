@@ -1,5 +1,5 @@
-import React from 'react';
-import { LayoutPanelLeft, X, Monitor, Tablet, Smartphone, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, ArrowUpToLine, Minus, ArrowDownToLine } from 'lucide-react';
+import React, { useRef } from 'react';
+import { LayoutPanelLeft, X, Monitor, Tablet, Smartphone, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, ArrowUpToLine, Minus, ArrowDownToLine, Upload } from 'lucide-react';
 import GradientPicker from './GradientPicker';
 import ColorInput from './ColorInput';
 
@@ -22,6 +22,45 @@ export default function Sidebar({
   onDeleteSelected,
   onDeleteAllSelected
 }) {
+  const fileInputRef = useRef(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        // Compress image using canvas
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        } else if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to base64 JPEG
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        onUpdateElement({...primarySelectedElement, content: compressedBase64});
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = null; // Reset input
+  };
+
   return (
     <div className={`properties-sidebar ${!isOpen ? 'closed' : ''}`}>
       <div className="sidebar-section">
@@ -213,9 +252,20 @@ export default function Sidebar({
           </div>
           
           {primarySelectedElement.type === 'image' && (
-            <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>
-              <label className="sidebar-label">Image URL</label>
-              <input type="text" className="sidebar-input" value={primarySelectedElement.content || ''} onChange={(e) => onUpdateElement({...primarySelectedElement, content: e.target.value})} />
+            <div className="sidebar-section" style={{ marginBottom: '1.5rem', background: 'var(--bg-main)', padding: '12px', borderRadius: '8px' }}>
+              <label className="sidebar-label" style={{ marginBottom: '8px', borderBottom: '1px solid var(--surface-border)', paddingBottom: '4px' }}>Image Source</label>
+              
+              <button 
+                className="btn btn-primary" 
+                style={{ width: '100%', marginBottom: '12px', display: 'flex', justifyContent: 'center', gap: '8px', padding: '0.6rem' }} 
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload size={16} /> Upload Image (Device)
+                <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
+              </button>
+
+              <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Or Paste URL</label>
+              <input type="text" className="sidebar-input" value={primarySelectedElement.content || ''} onChange={(e) => onUpdateElement({...primarySelectedElement, content: e.target.value})} placeholder="https://..." />
             </div>
           )}
         </div>
