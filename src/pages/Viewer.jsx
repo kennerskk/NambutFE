@@ -58,7 +58,6 @@ export default function Viewer() {
 
   const targetWidth = 1050;
   const targetHeight = 600;
-  const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(false);
   
   useEffect(() => {
