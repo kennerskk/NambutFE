@@ -59,18 +59,33 @@ export default function Viewer() {
   // Always use desktop layout (landscape) for Viewer, as requested by user
   const targetWidth = 1050;
   const targetHeight = 600;
+  const [rotate, setRotate] = useState(false);
   
   useEffect(() => {
     const handleResize = () => {
-      // Calculate scale to fit the window with a 5% padding
-      const scaleX = window.innerWidth / targetWidth;
-      const scaleY = window.innerHeight / targetHeight;
-      setScale(Math.min(scaleX, scaleY) * 0.95); 
+      const isMobile = window.innerWidth <= 768;
+      const isPortrait = window.innerHeight > window.innerWidth;
+      
+      let containerW = window.innerWidth;
+      let containerH = window.innerHeight;
+      
+      if (isMobile && isPortrait) {
+        setRotate(true);
+        // Swap dimensions for scaling calculation since it will be rotated 90deg
+        const scaleX = containerH / targetWidth;
+        const scaleY = containerW / targetHeight;
+        setScale(Math.min(scaleX, scaleY) * 0.95);
+      } else {
+        setRotate(false);
+        const scaleX = containerW / targetWidth;
+        const scaleY = containerH / targetHeight;
+        setScale(Math.min(scaleX, scaleY) * 0.95); 
+      }
     };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [targetWidth, targetHeight]);
+  }, []);
 
   if (isLoading) {
     return (
@@ -87,18 +102,23 @@ export default function Viewer() {
 
   const elements = card.desktopElements || [];
 
+  const bgStr = card.settings?.backgroundColor || '#f8fafc';
+  const isGradient = bgStr.includes('gradient');
+
   const canvasStyle = {
-    backgroundColor: card.settings?.backgroundColor || '#f8fafc',
-    backgroundImage: card.settings?.backgroundImage && card.settings.backgroundImage !== 'none' ? `url(${card.settings.backgroundImage})` : 'none',
-    backgroundSize: card.settings?.backgroundSize || 'cover',
-    backgroundRepeat: card.settings?.backgroundRepeat || 'no-repeat',
+    background: bgStr,
+    backgroundImage: card.settings?.backgroundImage && card.settings.backgroundImage !== 'none' 
+      ? `url(${card.settings.backgroundImage})` 
+      : (isGradient ? bgStr : 'none'),
+    backgroundSize: card.settings?.backgroundSize || (card.settings?.backgroundImage ? 'auto' : 'cover'),
+    backgroundRepeat: card.settings?.backgroundRepeat || (card.settings?.backgroundImage ? 'repeat' : 'no-repeat'),
     backgroundAttachment: card.settings?.backgroundAttachment || 'fixed',
     backgroundPosition: card.settings?.backgroundPosition || 'center',
     width: `${targetWidth}px`,
     height: `${targetHeight}px`,
     position: 'relative',
     overflow: 'hidden',
-    transform: `scale(${scale})`,
+    transform: `scale(${scale}) ${rotate ? 'rotate(90deg)' : ''}`,
     transformOrigin: 'center center',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     borderRadius: '12px'

@@ -14,8 +14,8 @@ const Canvas = ({ elements, settings, onUpdateElement, onDeleteElement, onLayerC
     backgroundImage: settings?.backgroundImage && settings.backgroundImage !== 'none' 
       ? `url(${settings.backgroundImage})` 
       : (isGradient ? bgStr : 'none'),
-    backgroundSize: settings?.backgroundSize || 'cover',
-    backgroundRepeat: settings?.backgroundRepeat || 'no-repeat',
+    backgroundSize: settings?.backgroundSize || (settings?.backgroundImage ? 'auto' : 'cover'),
+    backgroundRepeat: settings?.backgroundRepeat || (settings?.backgroundImage ? 'repeat' : 'no-repeat'),
     backgroundAttachment: settings?.backgroundAttachment || 'fixed',
     backgroundPosition: settings?.backgroundPosition || 'center'
   };
