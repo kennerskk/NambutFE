@@ -42,6 +42,8 @@ const ElementRenderer = ({ element, onUpdate, isSelected }) => {
     textAlign: style.textAlign || 'center',
     fontSize: style.fontSize || defaultStyles[type]?.fontSize || 'inherit',
     opacity: style.opacity !== undefined ? style.opacity : 1,
+    boxShadow: style.boxShadow || 'none',
+    transform: style.transform || 'none',
     outline: 'none',
     ...defaultStyles[type],
     ...style

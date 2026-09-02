@@ -111,54 +111,92 @@ export default function Sidebar({
             </div>
           </div>
 
-          <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>
-            <label className="sidebar-label">Opacity</label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <input 
-                type="range" 
-                min="0" max="100" 
-                className="sidebar-input" 
-                style={{ flex: 1, padding: 0, cursor: 'pointer', height: '4px' }} 
-                value={(primarySelectedElement.style?.opacity !== undefined ? primarySelectedElement.style.opacity : 1) * 100} 
-                onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, opacity: e.target.value / 100 }})} 
-              />
-              <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
-                {Math.round((primarySelectedElement.style?.opacity !== undefined ? primarySelectedElement.style.opacity : 1) * 100)}%
-              </span>
-            </div>
-          </div>
+          <div className="sidebar-section" style={{ marginBottom: '1.5rem', background: 'var(--bg-main)', padding: '12px', borderRadius: '8px' }}>
+            <label className="sidebar-label" style={{ marginBottom: '8px', borderBottom: '1px solid var(--surface-border)', paddingBottom: '4px' }}>Effects & Styling</label>
 
-          <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>
-            <label className="sidebar-label">Corner Radius</label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <input 
-                type="range" 
-                min="0" max="200" 
-                className="sidebar-input" 
-                style={{ flex: 1, padding: 0, cursor: 'pointer', height: '4px' }} 
-                value={parseInt(primarySelectedElement.style?.borderRadius || 0)} 
-                onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, borderRadius: `${e.target.value}px` }})} 
-              />
-              <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
-                {parseInt(primarySelectedElement.style?.borderRadius || 0)}px
-              </span>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Opacity</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input 
+                  type="range" 
+                  min="0" max="100" 
+                  className="sidebar-input" 
+                  style={{ flex: 1 }} 
+                  value={(primarySelectedElement.style?.opacity !== undefined ? primarySelectedElement.style.opacity : 1) * 100} 
+                  onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, opacity: e.target.value / 100 }})} 
+                />
+                <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
+                  {Math.round((primarySelectedElement.style?.opacity !== undefined ? primarySelectedElement.style.opacity : 1) * 100)}%
+                </span>
+              </div>
             </div>
-          </div>
 
-          <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>
-            <label className="sidebar-label">Glass Effect (Blur)</label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <input 
-                type="range" 
-                min="0" max="100" 
-                className="sidebar-input" 
-                style={{ flex: 1, padding: 0, cursor: 'pointer', height: '4px' }} 
-                value={parseInt((primarySelectedElement.style?.backdropFilter || '').replace('blur(', '') || 0)} 
-                onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, backdropFilter: `blur(${e.target.value}px)`, WebkitBackdropFilter: `blur(${e.target.value}px)` }})} 
-              />
-              <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
-                {parseInt((primarySelectedElement.style?.backdropFilter || '').replace('blur(', '') || 0)}px
-              </span>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Corner Radius</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input 
+                  type="range" 
+                  min="0" max="200" 
+                  className="sidebar-input" 
+                  style={{ flex: 1 }} 
+                  value={parseInt(primarySelectedElement.style?.borderRadius || 0)} 
+                  onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, borderRadius: `${e.target.value}px` }})} 
+                />
+                <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
+                  {parseInt(primarySelectedElement.style?.borderRadius || 0)}px
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Rotation</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input 
+                  type="range" 
+                  min="0" max="360" 
+                  className="sidebar-input" 
+                  style={{ flex: 1 }} 
+                  value={parseInt((primarySelectedElement.style?.transform || '').replace(/rotate\(|deg\)/g, '') || 0)} 
+                  onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, transform: `rotate(${e.target.value}deg)` }})} 
+                />
+                <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
+                  {parseInt((primarySelectedElement.style?.transform || '').replace(/rotate\(|deg\)/g, '') || 0)}°
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Drop Shadow Blur</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input 
+                  type="range" 
+                  min="0" max="100" 
+                  className="sidebar-input" 
+                  style={{ flex: 1 }} 
+                  value={parseInt((primarySelectedElement.style?.boxShadow || '').split(' ')[2] || 0)} 
+                  onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, boxShadow: e.target.value > 0 ? `0px 4px ${e.target.value}px rgba(0,0,0,0.5)` : 'none' }})} 
+                />
+                <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
+                  {parseInt((primarySelectedElement.style?.boxShadow || '').split(' ')[2] || 0)}px
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '0' }}>
+              <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Glass Effect (Blur)</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input 
+                  type="range" 
+                  min="0" max="100" 
+                  className="sidebar-input" 
+                  style={{ flex: 1 }} 
+                  value={parseInt((primarySelectedElement.style?.backdropFilter || '').replace('blur(', '') || 0)} 
+                  onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, backdropFilter: e.target.value > 0 ? `blur(${e.target.value}px)` : 'none', WebkitBackdropFilter: e.target.value > 0 ? `blur(${e.target.value}px)` : 'none' }})} 
+                />
+                <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
+                  {parseInt((primarySelectedElement.style?.backdropFilter || '').replace('blur(', '') || 0)}px
+                </span>
+              </div>
             </div>
           </div>
           
@@ -168,10 +206,6 @@ export default function Sidebar({
               <input type="text" className="sidebar-input" value={primarySelectedElement.content || ''} onChange={(e) => onUpdateElement({...primarySelectedElement, content: e.target.value})} />
             </div>
           )}
-
-          <button className="btn btn-outline" style={{ width: '100%', borderColor: 'var(--danger)', color: 'var(--danger)', display: 'flex', justifyContent: 'center', gap: '8px' }} onClick={() => onDeleteSelected(primarySelectedElement.id)}>
-            <Trash2 size={16} /> Delete Element (Del)
-          </button>
         </div>
       )}
     </div>
