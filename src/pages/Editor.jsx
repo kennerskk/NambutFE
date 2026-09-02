@@ -53,6 +53,7 @@ export default function Editor() {
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const isUndoRedoAction = useRef(false);
+  const lastUpdateRef = useRef(null);
 
   useEffect(() => {
     const init = async () => {
@@ -69,6 +70,7 @@ export default function Editor() {
         }
 
         const card = await api.getCard(cardId);
+        if (card.updatedAt) lastUpdateRef.current = card.updatedAt;
         if (card.title) setCardTitle(card.title);
         if (card.desktopElements) {
           setDeviceElements({
@@ -89,6 +91,45 @@ export default function Editor() {
       }
     };
     init();
+  }, [cardId]);
+
+  // Real-time Collaboration Polling (WebMCP)
+  useEffect(() => {
+    if (cardId === 'default-card') return; // Don't poll for unsaved default cards
+    
+    const interval = setInterval(async () => {
+      try {
+        const card = await api.getCard(cardId);
+        // If the database has a newer updatedAt, the AI (or another user) edited it
+        if (card.updatedAt && card.updatedAt !== lastUpdateRef.current) {
+          lastUpdateRef.current = card.updatedAt;
+          
+          // Prevent history from capturing polling updates immediately to avoid lag
+          isUndoRedoAction.current = true;
+          
+          if (card.desktopElements) {
+            setDeviceElements({
+              desktop: card.desktopElements || [],
+              tablet: card.tabletElements || [],
+              mobile: card.mobileElements || []
+            });
+            if (card.settings) setSettings(card.settings);
+            if (card.title) setCardTitle(card.title);
+            
+            [...(card.desktopElements || []), ...(card.tabletElements || []), ...(card.mobileElements || [])].forEach(el => {
+              if (el.style?.fontFamily) loadFont(el.style.fontFamily);
+            });
+            
+            setShowToast('✨ AI Collaboration: Magic Update!');
+            setTimeout(() => setShowToast(''), 3000);
+          }
+        }
+      } catch (err) {
+        // silently fail to prevent spamming console
+      }
+    }, 3000);
+    
+    return () => clearInterval(interval);
   }, [cardId]);
 
   // History tracking
