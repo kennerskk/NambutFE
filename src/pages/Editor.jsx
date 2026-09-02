@@ -35,13 +35,7 @@ export default function Editor() {
   const [showMyCardsModal, setShowMyCardsModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
-  
-  // Card Management States
-  const [myCards, setMyCards] = useState([]);
-  const [showMyCardsModal, setShowMyCardsModal] = useState(false);
-  const [cardToDelete, setCardToDelete] = useState(null);
-  const [showLimitModal, setShowLimitModal] = useState(false);
+
   const [previewMode, setPreviewMode] = useState('desktop');
   const [isSnapEnabled, setIsSnapEnabled] = useState(true);
   
