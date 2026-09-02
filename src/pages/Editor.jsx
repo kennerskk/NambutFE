@@ -139,28 +139,42 @@ export default function Editor() {
   // Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable) return;
+      const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+      const key = e.key.toLowerCase();
+      
+      // Globally prevent browser default for Ctrl+D (Bookmark) and Ctrl+S (Save)
+      if (isCmdOrCtrl && (key === 'd' || key === 's')) {
+        e.preventDefault();
+      }
+
+      const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable;
+      if (isInput) return; // Let native browser events handle text editing (except D and S)
+
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedIds.length > 0) {
         selectedIds.forEach(id => handleDeleteElement(id));
         setSelectedIds([]);
       }
-      if (e.ctrlKey || e.metaKey) {
-        if (e.key === 'z') {
+      
+      if (isCmdOrCtrl) {
+        if (key === 'z') {
           e.preventDefault();
           if (e.shiftKey) handleRedo();
           else handleUndo();
-        } else if (e.key === 'y') {
+        } else if (key === 'y') {
           e.preventDefault();
           handleRedo();
-        } else if (e.key === 'c') {
+        } else if (key === 'c') {
           e.preventDefault();
           if (selectedIds.length > 0) setClipboard(deviceElements[previewMode].filter(el => selectedIds.includes(el.id)));
-        } else if (e.key === 'v') {
+        } else if (key === 'v') {
           e.preventDefault();
           handleDuplicate(clipboard);
-        } else if (e.key === 'd') {
+        } else if (key === 'd') {
           e.preventDefault();
           if (selectedIds.length > 0) handleDuplicate(deviceElements[previewMode].filter(el => selectedIds.includes(el.id)));
+        } else if (key === 's') {
+          e.preventDefault();
+          handleSaveDesign();
         }
       }
     };
