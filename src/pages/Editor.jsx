@@ -191,9 +191,7 @@ export default function Editor() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setUser(null);
-    setMyCards([]);
-    setShowMyCardsModal(false);
+    window.location.reload();
   };
 
   const handleAuthSuccess = (userData) => {

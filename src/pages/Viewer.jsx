@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Link as LinkIcon } from 'lucide-react';
+import { Link as LinkIcon, X } from 'lucide-react';
 import { FaInstagram, FaFacebook, FaLinkedin, FaGithub, FaDiscord } from 'react-icons/fa';
 import { api } from '../api/client';
 
@@ -21,6 +21,8 @@ export default function Viewer() {
   const [card, setCard] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showAd, setShowAd] = useState(true);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -69,7 +71,22 @@ export default function Viewer() {
 
   // Choose layout based on screen width (simple responsive viewer)
   const isMobile = window.innerWidth <= 768;
+  const targetWidth = isMobile ? 375 : 1050;
+  const targetHeight = isMobile ? 812 : 600;
   const elements = isMobile && card.mobileElements?.length > 0 ? card.mobileElements : card.desktopElements;
+
+  useEffect(() => {
+    if (!card) return;
+    const handleResize = () => {
+      // Calculate scale to fit the window with a 5% padding
+      const scaleX = window.innerWidth / targetWidth;
+      const scaleY = window.innerHeight / targetHeight;
+      setScale(Math.min(scaleX, scaleY) * 0.95); 
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [targetWidth, targetHeight, card]);
 
   const canvasStyle = {
     backgroundColor: card.settings?.backgroundColor || '#f8fafc',
@@ -78,10 +95,14 @@ export default function Viewer() {
     backgroundRepeat: card.settings?.backgroundRepeat || 'no-repeat',
     backgroundAttachment: card.settings?.backgroundAttachment || 'fixed',
     backgroundPosition: card.settings?.backgroundPosition || 'center',
-    width: '100vw',
-    height: '100vh',
+    width: `${targetWidth}px`,
+    height: `${targetHeight}px`,
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    transform: `scale(${scale})`,
+    transformOrigin: 'center center',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    borderRadius: '12px'
   };
 
   const handleElementClick = (element) => {
@@ -101,7 +122,16 @@ export default function Viewer() {
   const sortedElements = [...elements].sort((a, b) => (a.z || 1) - (b.z || 1));
 
   return (
-    <div style={canvasStyle}>
+    <div style={{
+      width: '100vw',
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#111827', // Dark background for the viewer area outside the card
+      overflow: 'hidden'
+    }}>
+      <div style={canvasStyle}>
       {sortedElements.map(el => {
         const defaultStyles = {
           text: { fontSize: '24px', fontWeight: 'bold', color: 'var(--text-main)', textAlign: 'center' },
@@ -153,34 +183,45 @@ export default function Viewer() {
           </div>
         );
       })}
+      </div>
       
       {/* Advertisement Banner */}
-      <a 
-        href="https://nambut-fe.vercel.app/" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        style={{
+      {showAd && (
+        <div style={{
           position: 'fixed',
           bottom: '16px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: 'rgba(255, 255, 255, 0.9)',
+          background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(8px)',
-          padding: '8px 16px',
+          padding: '8px 12px 8px 16px',
           borderRadius: '20px',
-          fontSize: '12px',
+          fontSize: '13px',
           color: '#333',
-          textDecoration: 'none',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: '12px',
           zIndex: 1000,
           fontWeight: '500'
-        }}
-      >
-        ✨ Create your own card at <span style={{ color: '#3b82f6' }}>nambut-fe.vercel.app</span>
-      </a>
+        }}>
+          <a href="https://nambut-fe.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            ✨ Create your own card at <span style={{ color: '#3b82f6' }}>nambut-fe.vercel.app</span>
+          </a>
+          <div style={{ width: '1px', height: '14px', background: '#e5e7eb' }}></div>
+          <button 
+            onClick={() => setShowAd(false)}
+            style={{ 
+              background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af',
+              borderRadius: '50%'
+            }}
+            title="Close"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
