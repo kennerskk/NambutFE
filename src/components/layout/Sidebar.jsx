@@ -44,15 +44,6 @@ export default function Sidebar({
       ) : !primarySelectedElement ? (
         <div style={{ display: isOpen ? 'block' : 'none' }}>
           <div className="sidebar-section" style={{ marginBottom: '1rem' }}>
-            <label className="sidebar-label">Preview Device</label>
-            <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-main)', padding: '4px', borderRadius: '8px' }}>
-              <button className={`btn ${previewMode === 'desktop' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.4rem', flex: 1, borderRadius: '6px', border: 'none' }} onClick={() => setPreviewMode('desktop')} title="Horizontal Card (Desktop)"><Monitor size={16} /></button>
-              <button className={`btn ${previewMode === 'tablet' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.4rem', flex: 1, borderRadius: '6px', border: 'none' }} onClick={() => setPreviewMode('tablet')} title="Tablet Layout"><Tablet size={16} /></button>
-              <button className={`btn ${previewMode === 'mobile' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.4rem', flex: 1, borderRadius: '6px', border: 'none' }} onClick={() => setPreviewMode('mobile')} title="Vertical Card (Mobile)"><Smartphone size={16} /></button>
-            </div>
-          </div>
-
-          <div className="sidebar-section" style={{ marginBottom: '1rem' }}>
             <label className="sidebar-label">Background Color</label>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input type="color" className="sidebar-input" style={{ flex: '0 0 50px', padding: '0', height: '36px' }} value={settings.backgroundColor || '#ffffff'} onChange={(e) => setSettings({...settings, backgroundColor: e.target.value})} />

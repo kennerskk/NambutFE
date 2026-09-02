@@ -6,6 +6,7 @@ import { api } from '../api/client';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import AuthModal from '../components/modals/AuthModal';
+import { TEMPLATES } from '../templates';
 
 export default function Editor() {
   const { id } = useParams();
@@ -256,6 +257,19 @@ export default function Editor() {
     }
   };
 
+  const handleApplyTemplate = (templateKey) => {
+    const tpl = TEMPLATES[templateKey];
+    if (tpl) {
+      if (confirm(`Apply "${tpl.name}" template? This will replace your current design.`)) {
+        setSettings(tpl.settings);
+        setDeviceElements({ desktop: tpl.desktopElements, tablet: [], mobile: [] });
+        setSelectedIds([]);
+        setHistory([]);
+        setHistoryIndex(-1);
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="loading-screen">
@@ -289,6 +303,7 @@ export default function Editor() {
         onImport={handleImportScript}
         onSave={handleSaveDesign}
         isSaving={isSaving}
+        onApplyTemplate={handleApplyTemplate}
       />
       
       <main className="app-main">
