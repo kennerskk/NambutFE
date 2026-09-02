@@ -32,13 +32,16 @@ const ElementRenderer = ({ element, onUpdate, isSelected }) => {
   };
 
   const combinedStyle = {
-    width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+    width: '100%', height: '100%', display: 'flex', gap: '8px',
+    alignItems: style.alignItems || 'center', 
+    justifyContent: style.justifyContent || 'center',
     fontFamily: style.fontFamily || 'inherit',
     fontWeight: style.fontWeight || defaultStyles[type]?.fontWeight || 'normal',
     fontStyle: style.fontStyle || 'normal',
     textDecoration: style.textDecoration || 'none',
     textAlign: style.textAlign || 'center',
     fontSize: style.fontSize || defaultStyles[type]?.fontSize || 'inherit',
+    opacity: style.opacity !== undefined ? style.opacity : 1,
     outline: 'none',
     ...defaultStyles[type],
     ...style
