@@ -127,6 +127,40 @@ export default function Sidebar({
               </span>
             </div>
           </div>
+
+          <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>
+            <label className="sidebar-label">Corner Radius</label>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input 
+                type="range" 
+                min="0" max="200" 
+                className="sidebar-input" 
+                style={{ flex: 1, padding: 0, cursor: 'pointer', height: '4px' }} 
+                value={parseInt(primarySelectedElement.style?.borderRadius || 0)} 
+                onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, borderRadius: `${e.target.value}px` }})} 
+              />
+              <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
+                {parseInt(primarySelectedElement.style?.borderRadius || 0)}px
+              </span>
+            </div>
+          </div>
+
+          <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>
+            <label className="sidebar-label">Glass Effect (Blur)</label>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input 
+                type="range" 
+                min="0" max="100" 
+                className="sidebar-input" 
+                style={{ flex: 1, padding: 0, cursor: 'pointer', height: '4px' }} 
+                value={parseInt((primarySelectedElement.style?.backdropFilter || '').replace('blur(', '') || 0)} 
+                onChange={(e) => onUpdateElement({...primarySelectedElement, style: { ...primarySelectedElement.style, backdropFilter: `blur(${e.target.value}px)`, WebkitBackdropFilter: `blur(${e.target.value}px)` }})} 
+              />
+              <span style={{ fontSize: '12px', width: '35px', textAlign: 'right' }}>
+                {parseInt((primarySelectedElement.style?.backdropFilter || '').replace('blur(', '') || 0)}px
+              </span>
+            </div>
+          </div>
           
           {primarySelectedElement.type === 'image' && (
             <div className="sidebar-section" style={{ marginBottom: '1.5rem' }}>

@@ -19,8 +19,8 @@ export const TEMPLATES = {
     settings: { backgroundColor: 'linear-gradient(135deg, #4f46e5 0%, #d946ef 100%)', backgroundImage: 'none', textColor: '#ffffff' },
     desktopElements: [
       { id: 'c1', type: 'card', content: '', x: 325, y: 100, w: 400, h: 400, z: 1, style: { background: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.2)' } },
-      { id: 'c2', type: 'text', content: 'JOHN SMITH', x: 325, y: 220, w: 400, h: 60, z: 2, style: { fontSize: '42px', fontFamily: 'Poppins', fontWeight: 'bold', textAlign: 'center', justifyContent: 'center', alignItems: 'center', color: '#ffffff' } },
-      { id: 'c3', type: 'text', content: 'Full Stack Developer', x: 325, y: 280, w: 400, h: 40, z: 3, style: { fontSize: '18px', fontFamily: 'Poppins', fontWeight: 'normal', textAlign: 'center', justifyContent: 'center', alignItems: 'center', color: '#e2e8f0' } },
+      { id: 'c2', type: 'text', content: 'JOHN SMITH', x: 275, y: 220, w: 500, h: 60, z: 2, style: { fontSize: '42px', fontFamily: 'Poppins', fontWeight: 'bold', textAlign: 'center', justifyContent: 'center', alignItems: 'center', color: '#ffffff' } },
+      { id: 'c3', type: 'text', content: 'Full Stack Developer', x: 275, y: 280, w: 500, h: 40, z: 3, style: { fontSize: '18px', fontFamily: 'Poppins', fontWeight: 'normal', textAlign: 'center', justifyContent: 'center', alignItems: 'center', color: '#e2e8f0' } },
       { id: 'c4', type: 'button', content: 'https://github.com/john', x: 450, y: 340, w: 150, h: 50, z: 4, style: { background: '#ffffff', color: '#0f172a', borderRadius: '50px', justifyContent: 'center', alignItems: 'center' } }
     ]
   }
