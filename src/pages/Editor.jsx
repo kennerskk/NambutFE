@@ -189,6 +189,13 @@ export default function Editor() {
     setTimeout(() => setShowToast(''), 3000);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    setMyCards([]);
+    setShowMyCardsModal(false);
+  };
+
   const handleAuthSuccess = (userData) => {
     setUser(userData);
     setShowAuthModal(false);
@@ -467,6 +474,7 @@ export default function Editor() {
             {myCards.length < 3 && (
               <button className="btn btn-primary" style={{ marginTop: '8px', width: '100%' }} onClick={() => { setShowMyCardsModal(false); navigate('/'); }}>+ Create New Card</button>
             )}
+            <button className="btn btn-outline" style={{ marginTop: '8px', width: '100%', borderColor: 'var(--danger)', color: 'var(--danger)' }} onClick={handleLogout}>Log Out</button>
           </div>
         )}
       </Modal>
