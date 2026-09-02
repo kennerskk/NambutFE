@@ -45,11 +45,11 @@ export default function Sidebar({
       ) : !primarySelectedElement ? (
         <div style={{ display: isOpen ? 'block' : 'none' }}>
           <div className="sidebar-section" style={{ marginBottom: '1rem' }}>
-            <label className="sidebar-label">Background Color</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input type="color" className="sidebar-input" style={{ flex: '0 0 50px', padding: '0', height: '36px' }} value={settings.backgroundColor || '#ffffff'} onChange={(e) => setSettings({...settings, backgroundColor: e.target.value})} />
-              <input type="text" className="sidebar-input" style={{ flex: 1 }} value={settings.backgroundColor || ''} onChange={(e) => setSettings({...settings, backgroundColor: e.target.value})} />
-            </div>
+            <label className="sidebar-label">Background / Fill</label>
+            <GradientPicker 
+              value={settings.backgroundColor || '#ffffff'}
+              onChange={(newBg) => setSettings({...settings, backgroundColor: newBg})}
+            />
           </div>
 
           <div className="sidebar-section" style={{ marginBottom: '1rem' }}>

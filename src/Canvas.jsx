@@ -6,9 +6,14 @@ import ElementRenderer from './components/elements/ElementRenderer';
 const Canvas = ({ elements, settings, onUpdateElement, onDeleteElement, onLayerChange, selectedIds, setSelectedIds, isSnapEnabled }) => {
   const [dragGuides, setDragGuides] = useState({ x: null, y: null });
 
+  const bgStr = settings?.backgroundColor || '#0b0f19';
+  const isGradient = bgStr.includes('gradient');
+  
   const canvasStyle = {
-    backgroundColor: settings?.backgroundColor || '#0b0f19',
-    backgroundImage: settings?.backgroundImage && settings.backgroundImage !== 'none' ? `url(${settings.backgroundImage})` : 'none',
+    background: bgStr,
+    backgroundImage: settings?.backgroundImage && settings.backgroundImage !== 'none' 
+      ? `url(${settings.backgroundImage})` 
+      : (isGradient ? bgStr : 'none'),
     backgroundSize: settings?.backgroundSize || 'cover',
     backgroundRepeat: settings?.backgroundRepeat || 'no-repeat',
     backgroundAttachment: settings?.backgroundAttachment || 'fixed',
