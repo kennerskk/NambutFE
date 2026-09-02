@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Instagram, Facebook, Linkedin, Github, Monitor, Link as LinkIcon, Disc } from 'lucide-react'; // Disc for Discord
+import { Link as LinkIcon } from 'lucide-react';
+import { FaInstagram, FaFacebook, FaLinkedin, FaGithub, FaDiscord } from 'react-icons/fa';
 
 const getSocialIcon = (url) => {
   if (!url) return null;
   const lowerUrl = url.toLowerCase();
-  if (lowerUrl.includes('instagram.com')) return <Instagram size={24} />;
-  if (lowerUrl.includes('facebook.com')) return <Facebook size={24} />;
-  if (lowerUrl.includes('linkedin.com')) return <Linkedin size={24} />;
-  if (lowerUrl.includes('github.com')) return <Github size={24} />;
-  if (lowerUrl.includes('discord.')) return <Disc size={24} />;
+  if (lowerUrl.includes('instagram.com')) return <FaInstagram size={24} />;
+  if (lowerUrl.includes('facebook.com')) return <FaFacebook size={24} />;
+  if (lowerUrl.includes('linkedin.com')) return <FaLinkedin size={24} />;
+  if (lowerUrl.includes('github.com')) return <FaGithub size={24} />;
+  if (lowerUrl.includes('discord.')) return <FaDiscord size={24} />;
   if (lowerUrl.startsWith('http')) return <LinkIcon size={24} />;
   return null;
 };
