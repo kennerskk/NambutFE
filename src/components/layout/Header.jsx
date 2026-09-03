@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Save, Sparkles, Type, MousePointerClick, Magnet, Download, Upload, LogIn, LayoutTemplate, Image as ImageIcon, Circle, Square, Triangle, RectangleHorizontal, Eye, Link as LinkIcon } from 'lucide-react';
+import { Save, IdCard, Type, MousePointerClick, Magnet, Download, Upload, LogIn, LayoutTemplate, Image as ImageIcon, Circle, Square, Triangle, RectangleHorizontal, Eye, Link as LinkIcon } from 'lucide-react';
 import { TEMPLATES } from '../../templates';
 
 export default function Header({ 
@@ -23,7 +23,7 @@ export default function Header({
   return (
     <header className="app-header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '250px' }}>
-        <Sparkles className="logo-icon" color="#3b82f6" />
+        <IdCard className="logo-icon" color="#3b82f6" size={28} />
         <h1 className="logo" style={{ marginRight: '16px' }}>Nambut</h1>
         
         {/* Card Title Input */}
