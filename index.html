@@ -26,6 +26,36 @@
       "applicationCategory": "DesignApplication"
     }
   </script>
+  <script>
+    (function () {
+      if (typeof document !== 'undefined') {
+        if (!document.modelContext) {
+          document.modelContext = {};
+        }
+        var mc = document.modelContext;
+        if (!mc._tools) mc._tools = new Map();
+        if (!mc.registerTool) {
+          mc.registerTool = function (toolDef) {
+            if (!toolDef || !toolDef.name) throw new Error('Tool definition must have a name property');
+            mc._tools.set(toolDef.name, toolDef);
+            return toolDef;
+          };
+        }
+        if (!mc.getTools) {
+          mc.getTools = function () { return Array.from(mc._tools.values()); };
+        }
+        if (!mc.executeTool) {
+          mc.executeTool = async function (name, input) {
+            var tool = mc._tools.get(name);
+            if (!tool) throw new Error('Tool ' + name + ' not found');
+            return await tool.execute(input);
+          };
+        }
+        try { window.modelContext = mc; } catch (e) { }
+        try { navigator.modelContext = mc; } catch (e) { }
+      }
+    })();
+  </script>
 </head>
 
 <body>
