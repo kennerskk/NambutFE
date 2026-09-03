@@ -6,6 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nambut - AI Interactive Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        if (typeof window !== 'undefined') {
+          var mc = window.modelContext || navigator.modelContext || document.modelContext || {};
+          if (!mc._tools) mc._tools = new Map();
+          if (!mc.registerTool) {
+            mc.registerTool = function(toolDef) {
+              if (toolDef && toolDef.name) {
+                mc._tools.set(toolDef.name, toolDef);
+              }
+              return toolDef;
+            };
+          }
+          if (!mc.getTools) {
+            mc.getTools = function() {
+              return Array.from(mc._tools.values());
+            };
+          }
+          if (!mc.executeTool) {
+            mc.executeTool = async function(name, input) {
+              var tool = mc._tools.get(name);
+              if (!tool) throw new Error('Tool ' + name + ' not found');
+              return await tool.execute(input);
+            };
+          }
+          try {
+            Object.defineProperty(mc, 'tools', {
+              get: function() { return Array.from(mc._tools.values()); },
+              configurable: true
+            });
+          } catch(e) {}
+          
+          window.modelContext = mc;
+          try { navigator.modelContext = mc; } catch(e) {}
+          try { document.modelContext = mc; } catch(e) {}
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

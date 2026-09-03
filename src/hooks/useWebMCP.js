@@ -31,61 +31,55 @@ export function useWebMCP({
   useEffect(() => {
     // 1. Ensure ModelContext API container exists across document, window, navigator
     if (typeof window !== 'undefined') {
-      if (!document.modelContext) {
-        document.modelContext = {};
-      }
-      if (!navigator.modelContext) {
-        navigator.modelContext = document.modelContext;
-      }
-      if (!window.modelContext) {
-        window.modelContext = document.modelContext;
-      }
+      const mc = window.modelContext || navigator.modelContext || document.modelContext || {};
+      if (!mc._tools) mc._tools = new Map();
 
-      // Internal storage for tools
-      if (!document.modelContext._tools) {
-        document.modelContext._tools = new Map();
+      if (!mc.registerTool || typeof mc.registerTool !== 'function') {
+        mc.registerTool = function (toolDef) {
+          if (!toolDef || !toolDef.name) {
+            throw new Error('Tool definition must have a name property');
+          }
+          mc._tools.set(toolDef.name, toolDef);
+          return toolDef;
+        };
       }
 
-      // Ensure registerTool is defined
-      const registerTool = function (toolDef) {
-        if (!toolDef || !toolDef.name) {
-          throw new Error('Tool definition must have a name property');
-        }
-        document.modelContext._tools.set(toolDef.name, toolDef);
-        return toolDef;
-      };
+      if (!mc.getTools) {
+        mc.getTools = function () {
+          return Array.from(mc._tools.values());
+        };
+      }
 
-      document.modelContext.registerTool = registerTool;
-      navigator.modelContext.registerTool = registerTool;
-      window.modelContext.registerTool = registerTool;
+      if (!mc.executeTool) {
+        mc.executeTool = async function (name, input) {
+          const tool = mc._tools.get(name);
+          if (!tool) {
+            return {
+              content: [{ type: 'text', text: `Error: Tool '${name}' not found` }],
+              isError: true
+            };
+          }
+          return await tool.execute(input);
+        };
+      }
 
-      // Provide getter and executor helper methods for WebMCP Inspector / external agents
-      document.modelContext.getTools = function () {
-        return Array.from(document.modelContext._tools.values());
-      };
-      document.modelContext.executeTool = async function (name, input) {
-        const tool = document.modelContext._tools.get(name);
-        if (!tool) {
-          return {
-            content: [{ type: 'text', text: `Error: Tool '${name}' not found` }],
-            isError: true
-          };
-        }
-        return await tool.execute(input);
-      };
+      try {
+        Object.defineProperty(mc, 'tools', {
+          get() {
+            return Array.from(mc._tools.values());
+          },
+          configurable: true
+        });
+      } catch (e) {}
 
-      // Also expose as property if inspector scans document.modelContext.tools
-      Object.defineProperty(document.modelContext, 'tools', {
-        get() {
-          return Array.from(document.modelContext._tools.values());
-        },
-        configurable: true
-      });
+      window.modelContext = mc;
+      try { navigator.modelContext = mc; } catch (e) {}
+      try { document.modelContext = mc; } catch (e) {}
 
       // 2. Register WebMCP Tools
 
       // Tool 1: get_portfolio
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'get_portfolio',
         description: 'Get current portfolio title, background settings, and active canvas elements',
         inputSchema: {
@@ -113,7 +107,7 @@ export function useWebMCP({
       });
 
       // Tool 2: add_element
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'add_element',
         description: 'Add a new element (text, button, image, card) to the portfolio canvas',
         inputSchema: {
@@ -221,7 +215,7 @@ export function useWebMCP({
       });
 
       // Tool 3: update_element_style
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'update_element_style',
         description: 'Update CSS style properties (e.g. color, background, borderRadius, fontSize, fontStyle, boxShadow) of an element by ID',
         inputSchema: {
@@ -279,7 +273,7 @@ export function useWebMCP({
       });
 
       // Tool 4: move_element
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'move_element',
         description: 'Move an element to specific (x, y) coordinates on the canvas',
         inputSchema: {
@@ -327,7 +321,7 @@ export function useWebMCP({
       });
 
       // Tool 5: resize_element
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'resize_element',
         description: 'Resize an element width (w) and height (h) in pixels',
         inputSchema: {
@@ -375,7 +369,7 @@ export function useWebMCP({
       });
 
       // Tool 6: delete_element
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'delete_element',
         description: 'Delete an element from the portfolio canvas by its ID',
         inputSchema: {
@@ -421,7 +415,7 @@ export function useWebMCP({
       });
 
       // Tool 7: update_background
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'update_background',
         description: 'Update portfolio background color, background image, or size',
         inputSchema: {
@@ -466,7 +460,7 @@ export function useWebMCP({
       });
 
       // Tool 8: apply_template
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'apply_template',
         description: 'Apply a pre-built template design (minimal, creative, blank)',
         inputSchema: {
@@ -521,7 +515,7 @@ export function useWebMCP({
       });
 
       // Tool 9: clear_canvas
-      document.modelContext.registerTool({
+      mc.registerTool({
         name: 'clear_canvas',
         description: 'Clear all elements from the active canvas',
         inputSchema: {
