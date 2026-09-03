@@ -38,15 +38,36 @@ export function useWebMCP({
 
       if (!mc._tools) mc._tools = new Map();
 
-      if (!mc.registerTool || typeof mc.registerTool !== 'function') {
-        mc.registerTool = function (toolDef) {
-          if (!toolDef || !toolDef.name) {
-            throw new Error('Tool definition must have a name property');
+      mc.registerTool = function (toolDef) {
+        if (!toolDef || !toolDef.name) {
+          throw new Error('Tool definition must have a name property');
+        }
+        const execFn = toolDef.execute;
+        const cleanTool = {
+          name: toolDef.name,
+          title: toolDef.title || toolDef.name,
+          description: toolDef.description || '',
+          inputSchema: toolDef.inputSchema || { type: 'object', properties: {} },
+          toJSON() {
+            return {
+              name: this.name,
+              title: this.title,
+              description: this.description,
+              inputSchema: this.inputSchema
+            };
           }
-          mc._tools.set(toolDef.name, toolDef);
-          return toolDef;
         };
-      }
+        if (typeof execFn === 'function') {
+          Object.defineProperty(cleanTool, 'execute', {
+            value: execFn,
+            enumerable: false, // Prevents DataCloneError on Window postMessage
+            writable: true,
+            configurable: true
+          });
+        }
+        mc._tools.set(toolDef.name, cleanTool);
+        return cleanTool;
+      };
 
       if (!mc.getTools) {
         mc.getTools = function () {

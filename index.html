@@ -16,10 +16,34 @@
           if (!mc._tools) mc._tools = new Map();
           if (!mc.registerTool) {
             mc.registerTool = function(toolDef) {
-              if (toolDef && toolDef.name) {
-                mc._tools.set(toolDef.name, toolDef);
+              if (!toolDef || !toolDef.name) {
+                throw new Error('Tool definition must have a name property');
               }
-              return toolDef;
+              var execFn = toolDef.execute;
+              var cleanTool = {
+                name: toolDef.name,
+                title: toolDef.title || toolDef.name,
+                description: toolDef.description || '',
+                inputSchema: toolDef.inputSchema || { type: 'object', properties: {} },
+                toJSON: function() {
+                  return {
+                    name: this.name,
+                    title: this.title,
+                    description: this.description,
+                    inputSchema: this.inputSchema
+                  };
+                }
+              };
+              if (typeof execFn === 'function') {
+                Object.defineProperty(cleanTool, 'execute', {
+                  value: execFn,
+                  enumerable: false,
+                  writable: true,
+                  configurable: true
+                });
+              }
+              mc._tools.set(toolDef.name, cleanTool);
+              return cleanTool;
             };
           }
           if (!mc.getTools) {
