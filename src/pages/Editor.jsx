@@ -8,6 +8,7 @@ import Sidebar from '../components/layout/Sidebar';
 import AuthModal from '../components/modals/AuthModal';
 import Modal from '../components/ui/Modal';
 import { TEMPLATES } from '../templates';
+import { useWebMCP } from '../hooks/useWebMCP';
 
 export default function Editor() {
   const { id } = useParams();
@@ -47,6 +48,18 @@ export default function Editor() {
 
   // Initial Data Fetch & Server Wakeup
   const [isLoading, setIsLoading] = useState(true);
+
+  // WebMCP Registration Hook
+  useWebMCP({
+    deviceElements,
+    setDeviceElements,
+    settings,
+    setSettings,
+    previewMode,
+    cardTitle,
+    setCardTitle,
+    setShowToast
+  });
 
   // History & Clipboard
   const [clipboard, setClipboard] = useState([]);
