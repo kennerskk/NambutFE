@@ -37,6 +37,7 @@ export default function Editor() {
   const [showMyCardsModal, setShowMyCardsModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [templateToApply, setTemplateToApply] = useState(null);
 
   const [cardTitle, setCardTitle] = useState('My Business Card');
   const [previewMode, setPreviewMode] = useState('desktop');
@@ -410,13 +411,7 @@ export default function Editor() {
   const handleApplyTemplate = (templateKey) => {
     const tpl = TEMPLATES[templateKey];
     if (tpl) {
-      if (confirm(`Apply "${tpl.name}" template? This will replace your current design.`)) {
-        setSettings(tpl.settings);
-        setDeviceElements({ desktop: tpl.desktopElements, tablet: [], mobile: [] });
-        setSelectedIds([]);
-        setHistory([]);
-        setHistoryIndex(-1);
-      }
+      setTemplateToApply(templateKey);
     }
   };
 
@@ -441,6 +436,42 @@ export default function Editor() {
           onClose={() => setShowAuthModal(false)} 
           onSuccess={handleAuthSuccess} 
         />
+      )}
+
+      {templateToApply && (
+        <div className="modal-backdrop">
+          <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center' }}>
+            <h2 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Apply Template?</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+              Are you sure you want to apply "{TEMPLATES[templateToApply]?.name}"? <br/>
+              <span style={{ color: 'var(--danger)', fontSize: '0.9em' }}>This will replace your current design!</span>
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button 
+                className="btn btn-outline" 
+                onClick={() => setTemplateToApply(null)}
+                style={{ flex: 1 }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={() => {
+                  const tpl = TEMPLATES[templateToApply];
+                  setSettings(tpl.settings);
+                  setDeviceElements({ desktop: tpl.desktopElements, tablet: [], mobile: [] });
+                  setSelectedIds([]);
+                  setHistory([]);
+                  setHistoryIndex(-1);
+                  setTemplateToApply(null);
+                }}
+                style={{ flex: 1, backgroundColor: 'var(--primary)' }}
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {!isPreviewMode && (
