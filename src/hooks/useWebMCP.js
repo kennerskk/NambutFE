@@ -29,9 +29,13 @@ export function useWebMCP({
   }, [deviceElements, settings, previewMode, cardTitle]);
 
   useEffect(() => {
-    // 1. Ensure ModelContext API container exists across document, window, navigator
-    if (typeof window !== 'undefined') {
-      const mc = window.modelContext || navigator.modelContext || document.modelContext || {};
+    // 1. Primary target is document.modelContext according to Chrome WebMCP docs
+    if (typeof document !== 'undefined') {
+      if (!document.modelContext) {
+        document.modelContext = {};
+      }
+      const mc = document.modelContext;
+
       if (!mc._tools) mc._tools = new Map();
 
       if (!mc.registerTool || typeof mc.registerTool !== 'function') {
@@ -72,15 +76,15 @@ export function useWebMCP({
         });
       } catch (e) {}
 
-      window.modelContext = mc;
+      try { window.modelContext = mc; } catch (e) {}
       try { navigator.modelContext = mc; } catch (e) {}
-      try { document.modelContext = mc; } catch (e) {}
 
-      // 2. Register WebMCP Tools
+      // 2. Register WebMCP Tools (document.modelContext.registerTool)
 
       // Tool 1: get_portfolio
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'get_portfolio',
+        title: 'Get Portfolio Canvas',
         description: 'Get current portfolio title, background settings, and active canvas elements',
         inputSchema: {
           type: 'object',
@@ -107,8 +111,9 @@ export function useWebMCP({
       });
 
       // Tool 2: add_element
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'add_element',
+        title: 'Add Portfolio Element',
         description: 'Add a new element (text, button, image, card) to the portfolio canvas',
         inputSchema: {
           type: 'object',
@@ -215,8 +220,9 @@ export function useWebMCP({
       });
 
       // Tool 3: update_element_style
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'update_element_style',
+        title: 'Update Element Style',
         description: 'Update CSS style properties (e.g. color, background, borderRadius, fontSize, fontStyle, boxShadow) of an element by ID',
         inputSchema: {
           type: 'object',
@@ -273,8 +279,9 @@ export function useWebMCP({
       });
 
       // Tool 4: move_element
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'move_element',
+        title: 'Move Element',
         description: 'Move an element to specific (x, y) coordinates on the canvas',
         inputSchema: {
           type: 'object',
@@ -321,8 +328,9 @@ export function useWebMCP({
       });
 
       // Tool 5: resize_element
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'resize_element',
+        title: 'Resize Element',
         description: 'Resize an element width (w) and height (h) in pixels',
         inputSchema: {
           type: 'object',
@@ -369,8 +377,9 @@ export function useWebMCP({
       });
 
       // Tool 6: delete_element
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'delete_element',
+        title: 'Delete Element',
         description: 'Delete an element from the portfolio canvas by its ID',
         inputSchema: {
           type: 'object',
@@ -415,8 +424,9 @@ export function useWebMCP({
       });
 
       // Tool 7: update_background
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'update_background',
+        title: 'Update Canvas Background',
         description: 'Update portfolio background color, background image, or size',
         inputSchema: {
           type: 'object',
@@ -460,8 +470,9 @@ export function useWebMCP({
       });
 
       // Tool 8: apply_template
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'apply_template',
+        title: 'Apply Portfolio Template',
         description: 'Apply a pre-built template design (minimal, creative, blank)',
         inputSchema: {
           type: 'object',
@@ -515,8 +526,9 @@ export function useWebMCP({
       });
 
       // Tool 9: clear_canvas
-      mc.registerTool({
+      document.modelContext.registerTool({
         name: 'clear_canvas',
+        title: 'Clear Portfolio Canvas',
         description: 'Clear all elements from the active canvas',
         inputSchema: {
           type: 'object',

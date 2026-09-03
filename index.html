@@ -8,8 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
       (function() {
-        if (typeof window !== 'undefined') {
-          var mc = window.modelContext || navigator.modelContext || document.modelContext || {};
+        if (typeof document !== 'undefined') {
+          if (!document.modelContext) {
+            document.modelContext = {};
+          }
+          var mc = document.modelContext;
           if (!mc._tools) mc._tools = new Map();
           if (!mc.registerTool) {
             mc.registerTool = function(toolDef) {
@@ -38,9 +41,8 @@
             });
           } catch(e) {}
           
-          window.modelContext = mc;
+          try { window.modelContext = mc; } catch(e) {}
           try { navigator.modelContext = mc; } catch(e) {}
-          try { document.modelContext = mc; } catch(e) {}
         }
       })();
     </script>
