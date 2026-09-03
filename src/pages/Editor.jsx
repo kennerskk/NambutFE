@@ -439,7 +439,14 @@ export default function Editor() {
       )}
 
       {templateToApply && (
-        <div className="modal-backdrop">
+        <div 
+          className="modal-overlay" 
+          onClick={(e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+              setTemplateToApply(null);
+            }
+          }}
+        >
           <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center' }}>
             <h2 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Apply Template?</h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
