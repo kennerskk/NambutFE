@@ -1,78 +1,82 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nambut - AI Interactive Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-      (function() {
-        if (typeof document !== 'undefined') {
-          if (!document.modelContext) {
-            document.modelContext = {};
-          }
-          var mc = document.modelContext;
-          if (!mc._tools) mc._tools = new Map();
-          if (!mc.registerTool) {
-            mc.registerTool = function(toolDef) {
-              if (!toolDef || !toolDef.name) {
-                throw new Error('Tool definition must have a name property');
-              }
-              var execFn = toolDef.execute;
-              var cleanTool = {
-                name: toolDef.name,
-                title: toolDef.title || toolDef.name,
-                description: toolDef.description || '',
-                inputSchema: toolDef.inputSchema || { type: 'object', properties: {} },
-                toJSON: function() {
-                  return {
-                    name: this.name,
-                    title: this.title,
-                    description: this.description,
-                    inputSchema: this.inputSchema
-                  };
-                }
-              };
-              if (typeof execFn === 'function') {
-                Object.defineProperty(cleanTool, 'execute', {
-                  value: execFn,
-                  enumerable: false,
-                  writable: true,
-                  configurable: true
-                });
-              }
-              mc._tools.set(toolDef.name, cleanTool);
-              return cleanTool;
-            };
-          }
-          if (!mc.getTools) {
-            mc.getTools = function() {
-              return Array.from(mc._tools.values());
-            };
-          }
-          if (!mc.executeTool) {
-            mc.executeTool = async function(name, input) {
-              var tool = mc._tools.get(name);
-              if (!tool) throw new Error('Tool ' + name + ' not found');
-              return await tool.execute(input);
-            };
-          }
-          try {
-            Object.defineProperty(mc, 'tools', {
-              get: function() { return Array.from(mc._tools.values()); },
-              configurable: true
-            });
-          } catch(e) {}
-          
-          try { window.modelContext = mc; } catch(e) {}
-          try { navigator.modelContext = mc; } catch(e) {}
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nambut - AI Interactive Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      if (typeof document !== 'undefined') {
+        if (!document.modelContext) {
+          document.modelContext = {};
         }
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+        var mc = document.modelContext;
+        if (!mc._tools) mc._tools = new Map();
+        if (!mc.registerTool) {
+          mc.registerTool = function (toolDef) {
+            if (!toolDef || !toolDef.name) {
+              throw new Error('Tool definition must have a name property');
+            }
+            var execFn = toolDef.execute;
+            var cleanTool = {
+              name: toolDef.name,
+              title: toolDef.title || toolDef.name,
+              description: toolDef.description || '',
+              inputSchema: toolDef.inputSchema || { type: 'object', properties: {} },
+              toJSON: function () {
+                return {
+                  name: this.name,
+                  title: this.title,
+                  description: this.description,
+                  inputSchema: this.inputSchema
+                };
+              }
+            };
+            if (typeof execFn === 'function') {
+              Object.defineProperty(cleanTool, 'execute', {
+                value: execFn,
+                enumerable: false,
+                writable: true,
+                configurable: true
+
+              });
+            }
+            mc._tools.set(toolDef.name, cleanTool);
+            return cleanTool;
+          };
+        }
+        if (!mc.getTools) {
+          mc.getTools = function () {
+            return Array.from(mc._tools.values());
+          };
+        }
+        if (!mc.executeTool) {
+          mc.executeTool = async function (name, input) {
+            var tool = mc._tools.get(name);
+            if (!tool) throw new Error('Tool ' + name + ' not found');
+            return await tool.execute(input);
+          };
+        }
+        try {
+          Object.defineProperty(mc, 'tools', {
+            get: function () { return Array.from(mc._tools.values()); },
+            configurable: true
+          });
+        } catch (e) { }
+
+        try { window.modelContext = mc; } catch (e) { }
+        try { navigator.modelContext = mc; } catch (e) { }
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
