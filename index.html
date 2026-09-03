@@ -7,70 +7,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nambut - AI Interactive Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    (function () {
-      if (typeof document !== 'undefined') {
-        if (!document.modelContext) {
-          document.modelContext = {};
-        }
-        var mc = document.modelContext;
-        if (!mc._tools) mc._tools = new Map();
-        if (!mc.registerTool) {
-          mc.registerTool = function (toolDef) {
-            if (!toolDef || !toolDef.name) {
-              throw new Error('Tool definition must have a name property');
-            }
-            var execFn = toolDef.execute;
-            var cleanTool = {
-              name: toolDef.name,
-              title: toolDef.title || toolDef.name,
-              description: toolDef.description || '',
-              inputSchema: toolDef.inputSchema || { type: 'object', properties: {} },
-              toJSON: function () {
-                return {
-                  name: this.name,
-                  title: this.title,
-                  description: this.description,
-                  inputSchema: this.inputSchema
-                };
-              }
-            };
-            if (typeof execFn === 'function') {
-              Object.defineProperty(cleanTool, 'execute', {
-                value: execFn,
-                enumerable: false,
-                writable: true,
-                configurable: true
+  <meta name="description" content="Nambut is an AI Interactive Portfolio designed for the WebMCP Challenge. Build and explore with AI agents." />
+  <link rel="canonical" href="https://nambut-fe.vercel.app/" />
+  
+  <meta property="og:title" content="Nambut - AI Interactive Portfolio" />
+  <meta property="og:description" content="Nambut is an AI Interactive Portfolio designed for the WebMCP Challenge. Build and explore with AI agents." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://nambut-fe.vercel.app/" />
+  <meta property="og:image" content="https://nambut-fe.vercel.app/favicon.svg" />
 
-              });
-            }
-            mc._tools.set(toolDef.name, cleanTool);
-            return cleanTool;
-          };
-        }
-        if (!mc.getTools) {
-          mc.getTools = function () {
-            return Array.from(mc._tools.values());
-          };
-        }
-        if (!mc.executeTool) {
-          mc.executeTool = async function (name, input) {
-            var tool = mc._tools.get(name);
-            if (!tool) throw new Error('Tool ' + name + ' not found');
-            return await tool.execute(input);
-          };
-        }
-        try {
-          Object.defineProperty(mc, 'tools', {
-            get: function () { return Array.from(mc._tools.values()); },
-            configurable: true
-          });
-        } catch (e) { }
-
-        try { window.modelContext = mc; } catch (e) { }
-        try { navigator.modelContext = mc; } catch (e) { }
-      }
-    })();
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebApplication",
+      "name": "Nambut",
+      "url": "https://nambut-fe.vercel.app/",
+      "description": "AI Interactive Portfolio designed for the WebMCP Challenge",
+      "applicationCategory": "DesignApplication"
+    }
   </script>
 </head>
 
